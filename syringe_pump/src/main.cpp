@@ -119,11 +119,15 @@ void setup() {
   digitalWrite(DIR_PIN,CLOCK_WISE);
   stepper.set_dir = CLOCK_WISE;
 
+  load_set_timer();
+
   TFT_Init();
   
   initButtons();
 
   initTexts();
+
+  
 
   task_setup();
 }
