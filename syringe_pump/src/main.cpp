@@ -25,7 +25,7 @@ char buf[2];
 struct stepper
 {
   int set_motor;
-  int set_dir;
+  bool set_dir;
 }stepper;
 //stepper related----------------END------------------
 
@@ -162,25 +162,25 @@ void loop() {
     {
       //min button
       set_button.set_button_id=2;
-      display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_GREEN);
-      display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-      display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
     }
     else if(t_x>=14&&t_x<=54&&t_y>=110&&t_y<=150)
     {
       //hour button
       set_button.set_button_id=1;
-      display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-      display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_GREEN);
-      display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
     }
     else if(t_x>=150&&t_x<=194&&t_y>=110&&t_y<=150)
     {
       //sec button
       set_button.set_button_id=3;
-      display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-      display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-      display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
   }
 
@@ -198,14 +198,14 @@ void initTexts(void)
 {
   //rotations head
   tft.setTextColor(TFT_WHITE);
-  tft.drawString("Duration",60,70);
+  tft.drawString("Duration",60,80);
   timer.sec_cntr = 0;
   timer.min_cntr = 0;
   timer.hour_cntr = 0;
   tft.setFreeFont(FF20);
-  display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-  display_number(timer.min_cntr,85, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-  display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_WHITE);
+  display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+  display_number(timer.min_cntr,85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+  display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_WHITE);
 }
 
 //run stepper motor
@@ -257,6 +257,10 @@ void start_or_stop_press(void)
         set_butn.drawSmoothButton(!set_butn.getState(), 3, TFT_BLACK, set_butn.getState() ? "SET" : "SET");
       }
       global_flags.set_butn_clicked=0;
+      tft.setFreeFont(FF20);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.min_cntr,85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_WHITE);
       tft.fillRect(50,178,120,50,TFT_BLACK);
       stepper_motor_start();
       load_set_timer();
@@ -326,7 +330,14 @@ void IRAM_ATTR onTimer(){
           timer.hour_cntr=timer.set_hour;
           cw_butn.drawSmoothButton(!cw_butn.getState(), 3, TFT_BLACK, cw_butn.getState() ? "CW" : "CW");
           ccw_butn.drawSmoothButton(!ccw_butn.getState(), 3, TFT_BLACK, ccw_butn.getState() ? "CCW" : "CCW");
-          stepper.set_dir=~stepper.set_dir;
+          if(stepper.set_dir==CLOCK_WISE)
+          {
+            stepper.set_dir=COUNTER_CLOCK_WISE;
+          }
+          else
+          {
+            stepper.set_dir=CLOCK_WISE;
+          }
         }
         else
         {
@@ -337,9 +348,9 @@ void IRAM_ATTR onTimer(){
       }
     }
   }
-  display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-  display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-  display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_WHITE);
+  display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+  display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+  display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_WHITE);
   }
 }
 
@@ -400,8 +411,8 @@ void display_number(u_int8_t value, int32_t x, int32_t y, int32_t w, int32_t h, 
    sprintf(buf, "%d", value);
   }
   tft.drawString(buf,x,y,1);
-  tft.drawString(":",134,107);
-  tft.drawString(":",71,107);
+  tft.drawString(":",134,117);
+  tft.drawString(":",71,117);
 }
 
 void set_butn_pres(void)
@@ -415,9 +426,9 @@ void set_butn_pres(void)
       load_set_timer();
       global_flags.set_butn_clicked=1;
       set_button.set_button_id=1;
-      display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_GREEN);
-      display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_WHITE);
-      display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
       add_butn.initButtonUL(54,180,40,40,TFT_WHITE,TFT_BLACK,TFT_GREEN,"+",1);
       add_butn.setPressAction(add_butn_pres);
       add_butn.drawSmoothButton(false, 1, TFT_BLACK);
@@ -429,6 +440,10 @@ void set_butn_pres(void)
     {
       global_flags.set_butn_clicked=0;
       tft.fillRect(50,178,120,50,TFT_BLACK);
+      tft.setFreeFont(FF20);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.min_cntr,85, 120, 40, 40, TFT_BLACK, TFT_WHITE);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_WHITE);
     }
   }
 }
@@ -443,27 +458,27 @@ void add_butn_pres(void)
       timer.hour_cntr++;
       if(timer.hour_cntr>23)
       {
-        timer.hour_cntr=23;
+        timer.hour_cntr=0;
       }
-      display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
     else if(set_button.set_button_id==2)
     {
       timer.min_cntr++;
       if(timer.min_cntr>59)
       {
-        timer.min_cntr=59;
+        timer.min_cntr=0;
       }
-      display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
     else if(set_button.set_button_id==3)
     {
       timer.sec_cntr++;
       if(timer.sec_cntr>59)
       {
-        timer.sec_cntr=59;
+        timer.sec_cntr=0;
       }
-      display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
   }
 }
@@ -477,27 +492,27 @@ void sub_butn_pres(void)
       timer.hour_cntr--;
       if(timer.hour_cntr<0)
       {
-        timer.hour_cntr=0;
+        timer.hour_cntr=23;
       }
-      display_number(timer.hour_cntr, 14, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.hour_cntr, 14, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
     else if(set_button.set_button_id==2)
     {
       timer.min_cntr--;
       if(timer.min_cntr<0)
       {
-        timer.min_cntr=0;
+        timer.min_cntr=59;
       }
-      display_number(timer.min_cntr, 85, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.min_cntr, 85, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
     else if(set_button.set_button_id==3)
     {
       timer.sec_cntr--;
       if(timer.sec_cntr<0)
       {
-        timer.sec_cntr=0;
+        timer.sec_cntr=59;
       }
-      display_number(timer.sec_cntr, 150, 110, 40, 40, TFT_BLACK, TFT_GREEN);
+      display_number(timer.sec_cntr, 150, 120, 40, 40, TFT_BLACK, TFT_GREEN);
     }
   }
 }
